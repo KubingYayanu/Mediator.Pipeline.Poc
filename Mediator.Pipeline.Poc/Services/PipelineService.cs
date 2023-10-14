@@ -75,7 +75,7 @@ namespace Mediator.Pipeline.Poc.Services
                 .Chain(new ChainCQryRequest())
                 .Send();
 
-            Console.WriteLine($"Final result on pipeline B: {response}");
+            Console.WriteLine($"Final result on pipeline C: {response}");
         }
     }
 }
