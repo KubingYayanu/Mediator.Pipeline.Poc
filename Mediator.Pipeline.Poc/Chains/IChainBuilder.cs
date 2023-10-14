@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using Mediator.Pipeline.Poc.Enums;
+using MediatR;
 
 namespace Mediator.Pipeline.Poc.Chains
 {
@@ -6,14 +7,16 @@ namespace Mediator.Pipeline.Poc.Chains
     {
         IMediator Mediator { get; }
 
+        ChainStage Stage { get; }
+
         List<IRequest<TResult>> Chains { get; }
 
         IChainBuilder<TResult> Chain<TRequest>(TRequest request)
-            where TRequest : IRequest<TResult>, new();
+            where TRequest : IRequest<TResult>, IChainRequest, new();
 
         IChainBuilder<TResult> Chain<TRequest>(
             Func<TRequest, TRequest> operation)
-            where TRequest : IRequest<TResult>, new();
+            where TRequest : IRequest<TResult>, IChainRequest, new();
 
         ChainBuilder<TResult> StopOn(Func<TResult, bool> stopPredicate);
 

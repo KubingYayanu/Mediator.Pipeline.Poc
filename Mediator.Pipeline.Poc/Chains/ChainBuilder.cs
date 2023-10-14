@@ -1,40 +1,53 @@
-﻿using MediatR;
+﻿using Mediator.Pipeline.Poc.Enums;
+using MediatR;
 
 namespace Mediator.Pipeline.Poc.Chains
 {
     public class ChainBuilder<TResult> : IChainBuilder<TResult>
     {
-        public ChainBuilder(IMediator mediator)
+        public ChainBuilder(IMediator mediator, ChainStage stage)
         {
             Mediator = mediator;
+            Stage = stage;
             Chains ??= new List<IRequest<TResult>>();
             StopPredicates ??= new StopPredicates<TResult>();
         }
 
-        public ChainBuilder(IMediator mediator, Func<TResult, bool> stopPredicate)
-            : this(mediator)
+        public ChainBuilder(IMediator mediator, ChainStage stage, Func<TResult, bool> stopPredicate)
+            : this(mediator, stage)
         {
             StopOn(stopPredicate);
         }
 
         public IMediator Mediator { get; }
 
+        public ChainStage Stage { get; }
+
         public List<IRequest<TResult>> Chains { get; }
 
         private StopPredicates<TResult> StopPredicates { get; }
 
         public IChainBuilder<TResult> Chain<TRequest>(TRequest request)
-            where TRequest : IRequest<TResult>, new()
+            where TRequest : IRequest<TResult>, IChainRequest, new()
         {
+            if (Stage != request.Stage)
+            {
+                var message = $"Chain/Request stage not same. ChainStage: {Stage}, RequestStage: {request.Stage}";
+                throw new ArgumentException(message);
+            }
+
             Chains.Add(request);
             return this;
         }
 
         public IChainBuilder<TResult> Chain<TRequest>(
             Func<TRequest, TRequest> operation)
-            where TRequest : IRequest<TResult>, new()
+            where TRequest : IRequest<TResult>, IChainRequest, new()
         {
-            if (operation == null) throw new ArgumentNullException(nameof(operation));
+            if (operation == null)
+            {
+                throw new ArgumentNullException(nameof(operation));
+            }
 
             var request = new TRequest();
 
