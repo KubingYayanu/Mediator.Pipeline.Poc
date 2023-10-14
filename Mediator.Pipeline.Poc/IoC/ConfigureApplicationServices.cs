@@ -1,4 +1,6 @@
-﻿using Mediator.Pipeline.Poc.Services;
+﻿using System.Reflection;
+using Mediator.Pipeline.Poc.Helpers;
+using Mediator.Pipeline.Poc.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -13,7 +15,8 @@ namespace Mediator.Pipeline.Poc.IoC
             services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(ConfigureApplicationServices).Assembly));
 
             services.AddScoped<IPipelineService, PipelineService>();
-            
+            services.AddMediatRAttributedBehaviors(Assembly.GetExecutingAssembly());
+
             return services;
         }
     }
