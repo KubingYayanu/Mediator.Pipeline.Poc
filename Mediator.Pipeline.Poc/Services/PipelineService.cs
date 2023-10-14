@@ -15,16 +15,16 @@ namespace Mediator.Pipeline.Poc.Services
 
         public async Task Run()
         {
-            var requestA = new ChainAQryRequest();
             var response = await _mediator
-                .Chain<ChainAQryRequest, int>(requestA)
+                .Chain<ChainAQryRequest, int>(new ChainAQryRequest { Name = "Hi" })
                 .Chain<ChainBQryRequest>(
                     request =>
                     {
                         request.Age = 2;
                         return request;
                     })
-                .StopOn(x => x == 1)
+                .Chain(new ChainCQryRequest { Success = true })
+                .StopOn(x => x == 3)
                 .Send();
 
             Console.WriteLine($"Final Result: {response}");
