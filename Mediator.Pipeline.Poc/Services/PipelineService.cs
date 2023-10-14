@@ -44,7 +44,7 @@ namespace Mediator.Pipeline.Poc.Services
         {
             var response = await _mediator
                 .Chain<ChainAQryRequest, int>(
-                    stage: ChainStage.StageA,
+                    stage: ChainStage.StageB,
                     operation: request =>
                     {
                         request.Name = "Hello";
@@ -62,7 +62,7 @@ namespace Mediator.Pipeline.Poc.Services
         {
             var response = await _mediator
                 .StopOn<int>(
-                    stage: ChainStage.StageA,
+                    stage: ChainStage.StageC,
                     x => x == 3)
                 .Chain<ChainAQryRequest>(
                     operation: request =>

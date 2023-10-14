@@ -8,6 +8,6 @@ namespace Mediator.Pipeline.Poc.Requests
     {
         public int Age { get; set; }
 
-        public ChainStage Stage => ChainStage.StageA;
+        public ChainStage Stage { get; set; }
     }
 }

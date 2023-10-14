@@ -11,6 +11,6 @@ namespace Mediator.Pipeline.Poc.Requests
     {
         public bool Success { get; set; }
 
-        public ChainStage Stage => ChainStage.StageA;
+        public ChainStage Stage { get; set; }
     }
 }

@@ -4,6 +4,6 @@ namespace Mediator.Pipeline.Poc.Chains
 {
     public interface IChainRequest
     {
-        ChainStage Stage { get; }
+        ChainStage Stage { get; set; }
     }
 }

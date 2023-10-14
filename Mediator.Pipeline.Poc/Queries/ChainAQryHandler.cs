@@ -7,8 +7,8 @@ namespace Mediator.Pipeline.Poc.Queries
     {
         public Task<int> Handle(ChainAQryRequest request, CancellationToken cancellationToken)
         {
-            Console.WriteLine("Query A");
-            
+            Console.WriteLine($"Query A, Name: {request.Name}, Stage: {request.Stage}");
+
             return Task.FromResult(1);
         }
     }

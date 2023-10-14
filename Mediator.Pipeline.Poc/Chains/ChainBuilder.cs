@@ -30,12 +30,7 @@ namespace Mediator.Pipeline.Poc.Chains
         public IChainBuilder<TResult> Chain<TRequest>(TRequest request)
             where TRequest : IRequest<TResult>, IChainRequest, new()
         {
-            if (Stage != request.Stage)
-            {
-                var message = $"Chain/Request stage not same. ChainStage: {Stage}, RequestStage: {request.Stage}";
-                throw new ArgumentException(message);
-            }
-
+            request.Stage = Stage;
             Chains.Add(request);
             return this;
         }
