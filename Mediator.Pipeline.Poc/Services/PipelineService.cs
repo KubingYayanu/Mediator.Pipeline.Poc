@@ -16,10 +16,17 @@ namespace Mediator.Pipeline.Poc.Services
 
         public async Task Run()
         {
+            await PipelineA();
+            await PipelineB();
+            await PipelineC();
+        }
+
+        private async Task PipelineA()
+        {
             var response = await _mediator
                 .Chain<ChainAQryRequest, int>(
-                    request: new ChainAQryRequest { Name = "Hi" },
-                    stage: ChainStage.StageA)
+                    stage: ChainStage.StageA,
+                    request: new ChainAQryRequest { Name = "Hi" })
                 .Chain<ChainBQryRequest>(
                     request =>
                     {
@@ -30,7 +37,45 @@ namespace Mediator.Pipeline.Poc.Services
                 .StopOn(x => x == 3)
                 .Send();
 
-            Console.WriteLine($"Final Result: {response}");
+            Console.WriteLine($"Final result on pipeline A: {response}");
+        }
+
+        private async Task PipelineB()
+        {
+            var response = await _mediator
+                .Chain<ChainAQryRequest, int>(
+                    stage: ChainStage.StageA,
+                    operation: request =>
+                    {
+                        request.Name = "Hello";
+                        return request;
+                    })
+                .StopOn(x => x == 2)
+                .Chain(new ChainBQryRequest { Age = 10 })
+                .Chain(new ChainCQryRequest())
+                .Send();
+
+            Console.WriteLine($"Final result on pipeline B: {response}");
+        }
+
+        private async Task PipelineC()
+        {
+            var response = await _mediator
+                .StopOn<int>(
+                    stage: ChainStage.StageA,
+                    x => x == 3)
+                .Chain<ChainAQryRequest>(
+                    operation: request =>
+                    {
+                        request.Name = "Hello";
+                        return request;
+                    })
+                .StopOn(x => x == 2)
+                .Chain(new ChainBQryRequest { Age = 10 })
+                .Chain(new ChainCQryRequest())
+                .Send();
+
+            Console.WriteLine($"Final result on pipeline B: {response}");
         }
     }
 }
