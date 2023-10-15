@@ -19,6 +19,7 @@ namespace Mediator.Pipeline.Poc.Services
             await PipelineA();
             await PipelineB();
             await PipelineC();
+            await PipelineD();
         }
 
         private async Task PipelineA()
@@ -76,6 +77,18 @@ namespace Mediator.Pipeline.Poc.Services
                 .Send();
 
             Console.WriteLine($"Final result on pipeline C: {response}");
+        }
+
+        private async Task PipelineD()
+        {
+            var response = await _mediator
+                .Chain<ChainAQryRequest, int>(stage: ChainStage.StageD)
+                .Chain<ChainBQryRequest>()
+                .Chain(new ChainCQryRequest())
+                .StopOn(x => x == 2)
+                .Send();
+
+            Console.WriteLine($"Final result on pipeline D: {response}");
         }
     }
 }

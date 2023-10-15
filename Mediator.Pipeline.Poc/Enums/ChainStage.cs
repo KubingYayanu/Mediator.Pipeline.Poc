@@ -4,6 +4,7 @@
     {
         StageA,
         StageB,
-        StageC
+        StageC,
+        StageD
     }
 }

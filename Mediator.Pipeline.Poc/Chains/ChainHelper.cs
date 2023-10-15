@@ -24,6 +24,16 @@ namespace Mediator.Pipeline.Poc.Chains
 
             return new ChainBuilder<TResult>(mediator, stage).Chain(operation);
         }
+        
+        public static IChainBuilder<TResult> Chain<TRequest, TResult>(
+            this IMediator mediator,
+            ChainStage stage)
+            where TRequest : IRequest<TResult>, IChainRequest, new()
+        {
+            var request = new TRequest();
+            
+            return new ChainBuilder<TResult>(mediator, stage).Chain(request);
+        }
 
         public static IChainBuilder<TResult> StopOn<TResult>(
             this IMediator mediator,

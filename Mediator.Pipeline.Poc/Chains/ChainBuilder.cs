@@ -49,6 +49,14 @@ namespace Mediator.Pipeline.Poc.Chains
             return Chain(operation(request));
         }
 
+        public IChainBuilder<TResult> Chain<TRequest>()
+            where TRequest : IRequest<TResult>, IChainRequest, new()
+        {
+            var request = new TRequest();
+
+            return Chain(request);
+        }
+
         public ChainBuilder<TResult> StopOn(Func<TResult, bool> stopPredicate)
         {
             StopPredicate<TResult> predicate = result => stopPredicate(result);
