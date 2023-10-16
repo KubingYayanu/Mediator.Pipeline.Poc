@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using Mediator.Pipeline.Poc.Chains;
 using Mediator.Pipeline.Poc.Helpers;
 using Mediator.Pipeline.Poc.Services;
 using Microsoft.Extensions.Configuration;
@@ -16,6 +17,8 @@ namespace Mediator.Pipeline.Poc.IoC
 
             services.AddScoped<IPipelineService, PipelineService>();
             services.AddMediatRAttributedBehaviors(Assembly.GetExecutingAssembly());
+
+            services.AddScoped<IChainContextWarehouse, ChainContextWarehouse>();
 
             return services;
         }
