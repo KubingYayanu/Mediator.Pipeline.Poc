@@ -57,7 +57,7 @@ namespace Mediator.Pipeline.Poc.Chains
             return Chain(request);
         }
 
-        public ChainBuilder<TResult> StopOn(Func<TResult, bool> stopPredicate)
+        public IChainBuilder<TResult> StopOn(Func<TResult, bool> stopPredicate)
         {
             StopPredicate<TResult> predicate = result => stopPredicate(result);
             StopPredicates.Add(predicate);

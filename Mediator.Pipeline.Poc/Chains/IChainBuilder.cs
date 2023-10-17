@@ -21,7 +21,7 @@ namespace Mediator.Pipeline.Poc.Chains
         IChainBuilder<TResult> Chain<TRequest>()
             where TRequest : IRequest<TResult>, IChainRequest, new();
 
-        ChainBuilder<TResult> StopOn(Func<TResult, bool> stopPredicate);
+        IChainBuilder<TResult> StopOn(Func<TResult, bool> stopPredicate);
 
         Task<TResult> Send(CancellationToken cancellationToken = default);
     }
