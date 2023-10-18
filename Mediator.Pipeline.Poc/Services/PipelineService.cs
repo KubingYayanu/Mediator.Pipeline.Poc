@@ -25,16 +25,16 @@ namespace Mediator.Pipeline.Poc.Services
         private async Task PipelineA()
         {
             var response = await _mediator
-                .Chain<ChainAQryRequest, int>(
-                    stage: ChainStage.StageA,
-                    request: new ChainAQryRequest { Name = "Hi" })
-                .Chain<ChainBQryRequest>(
+                .Stage<ChainStageAQryRequest, int>(
+                    pipeline: ChainPipeline.PipelineA,
+                    request: new ChainStageAQryRequest { Name = "Hi" })
+                .Stage<ChainStageBQryRequest>(
                     request =>
                     {
                         request.Age = 2;
                         return request;
                     })
-                .Chain(new ChainCQryRequest { Success = true })
+                .Stage(new ChainStageCQryRequest { Success = true })
                 .StopOn(x => x == 3)
                 .Send();
 
@@ -44,16 +44,16 @@ namespace Mediator.Pipeline.Poc.Services
         private async Task PipelineB()
         {
             var response = await _mediator
-                .Chain<ChainAQryRequest, int>(
-                    stage: ChainStage.StageB,
+                .Stage<ChainStageAQryRequest, int>(
+                    pipeline: ChainPipeline.PipelineB,
                     operation: request =>
                     {
                         request.Name = "Hello";
                         return request;
                     })
                 .StopOn(x => x == 2)
-                .Chain(new ChainBQryRequest { Age = 10 })
-                .Chain(new ChainCQryRequest())
+                .Stage(new ChainStageBQryRequest { Age = 10 })
+                .Stage(new ChainStageCQryRequest())
                 .Send();
 
             Console.WriteLine($"Final result on pipeline B: {response}");
@@ -63,17 +63,17 @@ namespace Mediator.Pipeline.Poc.Services
         {
             var response = await _mediator
                 .StopOn<int>(
-                    stage: ChainStage.StageC,
+                    pipeline: ChainPipeline.PipelineC,
                     x => x == 3)
-                .Chain<ChainAQryRequest>(
+                .Stage<ChainStageAQryRequest>(
                     operation: request =>
                     {
                         request.Name = "Hello";
                         return request;
                     })
                 .StopOn(x => x == 2)
-                .Chain(new ChainBQryRequest { Age = 10 })
-                .Chain(new ChainCQryRequest())
+                .Stage(new ChainStageBQryRequest { Age = 10 })
+                .Stage(new ChainStageCQryRequest())
                 .Send();
 
             Console.WriteLine($"Final result on pipeline C: {response}");
@@ -82,9 +82,9 @@ namespace Mediator.Pipeline.Poc.Services
         private async Task PipelineD()
         {
             var response = await _mediator
-                .Chain<ChainAQryRequest, int>(stage: ChainStage.StageD)
-                .Chain<ChainBQryRequest>()
-                .Chain(new ChainCQryRequest())
+                .Stage<ChainStageAQryRequest, int>(pipeline: ChainPipeline.PipelineD)
+                .Stage<ChainStageBQryRequest>()
+                .Stage(new ChainStageCQryRequest())
                 .StopOn(x => x == 2)
                 .Send();
 

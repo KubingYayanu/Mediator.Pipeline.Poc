@@ -3,9 +3,9 @@ using Mediator.Pipeline.Poc.Enums;
 
 namespace Mediator.Pipeline.Poc.Models
 {
-    public class StageAContext : IChainContext
+    public class PipelineAContext : IChainPipelineContext
     {
-        public ChainStage Stage => ChainStage.StageA;
+        public ChainPipeline Pipeline => ChainPipeline.PipelineA;
 
         public string Name { get; set; }
 

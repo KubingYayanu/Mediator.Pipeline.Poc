@@ -6,11 +6,11 @@ using MediatR;
 
 namespace Mediator.Pipeline.Poc.Requests
 {
-    [MediatrBehavior(typeof(PassThroughBehavior<ChainAQryRequest, int>))]
-    public class ChainAQryRequest : IRequest<int>, IChainRequest
+    [MediatrBehavior(typeof(PassThroughBehavior<ChainStageAQryRequest, int>))]
+    public class ChainStageAQryRequest : IRequest<int>, IChainStageRequest
     {
         public string Name { get; set; }
 
-        public ChainStage Stage { get; set; }
+        public ChainPipeline Pipeline { get; set; }
     }
 }

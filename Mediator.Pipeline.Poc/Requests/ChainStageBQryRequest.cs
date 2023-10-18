@@ -4,10 +4,10 @@ using MediatR;
 
 namespace Mediator.Pipeline.Poc.Requests
 {
-    public class ChainBQryRequest : IRequest<int>, IChainRequest
+    public class ChainStageBQryRequest : IRequest<int>, IChainStageRequest
     {
         public int Age { get; set; }
 
-        public ChainStage Stage { get; set; }
+        public ChainPipeline Pipeline { get; set; }
     }
 }

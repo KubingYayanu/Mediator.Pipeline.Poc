@@ -18,7 +18,7 @@ namespace Mediator.Pipeline.Poc.IoC
             services.AddScoped<IPipelineService, PipelineService>();
             services.AddMediatRAttributedBehaviors(Assembly.GetExecutingAssembly());
 
-            services.AddScoped<IChainContextWarehouse, ChainContextWarehouse>();
+            services.AddScoped<IChainPipelineContextWarehouse, ChainPipelineContextWarehouse>();
 
             return services;
         }

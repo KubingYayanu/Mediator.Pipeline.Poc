@@ -3,41 +3,41 @@ using MediatR;
 
 namespace Mediator.Pipeline.Poc.Chains
 {
-    public class ChainBuilder<TResult> : IChainBuilder<TResult>
+    public class ChainPipelineBuilder<TResult> : IChainPipelineBuilder<TResult>
     {
-        public ChainBuilder(IMediator mediator, ChainStage stage)
+        public ChainPipelineBuilder(IMediator mediator, ChainPipeline pipeline)
         {
             Mediator = mediator;
-            Stage = stage;
-            Chains ??= new List<IRequest<TResult>>();
+            Pipeline = pipeline;
+            Stages ??= new List<IRequest<TResult>>();
             StopPredicates ??= new StopPredicates<TResult>();
         }
 
-        public ChainBuilder(IMediator mediator, ChainStage stage, Func<TResult, bool> stopPredicate)
-            : this(mediator, stage)
+        public ChainPipelineBuilder(IMediator mediator, ChainPipeline pipeline, Func<TResult, bool> stopPredicate)
+            : this(mediator, pipeline)
         {
             StopOn(stopPredicate);
         }
 
         public IMediator Mediator { get; }
 
-        public ChainStage Stage { get; }
+        public ChainPipeline Pipeline { get; }
 
-        public List<IRequest<TResult>> Chains { get; }
+        public List<IRequest<TResult>> Stages { get; }
 
         private StopPredicates<TResult> StopPredicates { get; }
 
-        public IChainBuilder<TResult> Chain<TRequest>(TRequest request)
-            where TRequest : IRequest<TResult>, IChainRequest, new()
+        public IChainPipelineBuilder<TResult> Stage<TRequest>(TRequest request)
+            where TRequest : IRequest<TResult>, IChainStageRequest, new()
         {
-            request.Stage = Stage;
-            Chains.Add(request);
+            request.Pipeline = Pipeline;
+            Stages.Add(request);
             return this;
         }
 
-        public IChainBuilder<TResult> Chain<TRequest>(
+        public IChainPipelineBuilder<TResult> Stage<TRequest>(
             Func<TRequest, TRequest> operation)
-            where TRequest : IRequest<TResult>, IChainRequest, new()
+            where TRequest : IRequest<TResult>, IChainStageRequest, new()
         {
             if (operation == null)
             {
@@ -46,18 +46,18 @@ namespace Mediator.Pipeline.Poc.Chains
 
             var request = new TRequest();
 
-            return Chain(operation(request));
+            return Stage(operation(request));
         }
 
-        public IChainBuilder<TResult> Chain<TRequest>()
-            where TRequest : IRequest<TResult>, IChainRequest, new()
+        public IChainPipelineBuilder<TResult> Stage<TRequest>()
+            where TRequest : IRequest<TResult>, IChainStageRequest, new()
         {
             var request = new TRequest();
 
-            return Chain(request);
+            return Stage(request);
         }
 
-        public IChainBuilder<TResult> StopOn(Func<TResult, bool> stopPredicate)
+        public IChainPipelineBuilder<TResult> StopOn(Func<TResult, bool> stopPredicate)
         {
             StopPredicate<TResult> predicate = result => stopPredicate(result);
             StopPredicates.Add(predicate);
@@ -67,9 +67,9 @@ namespace Mediator.Pipeline.Poc.Chains
         public async Task<TResult> Send(CancellationToken cancellationToken = default)
         {
             TResult response = default;
-            foreach (var chain in Chains)
+            foreach (var stage in Stages)
             {
-                response = await Mediator.Send(chain, cancellationToken);
+                response = await Mediator.Send(stage, cancellationToken);
                 if (StopPredicates.AnyMatch(response))
                 {
                     Console.WriteLine($"Stop on Result: {response}");
